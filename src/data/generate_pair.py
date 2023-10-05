@@ -1,6 +1,7 @@
 import os
 import json
 import numpy as np
+import re
 from sklearn.model_selection import train_test_split
 import argparse
 import py_vncorenlp
@@ -22,10 +23,10 @@ class GenerateDataPair(object):
             pure_data = json.load(f)
         for key, value in pure_data.items():
             value['key'] = key
-            value['claim'] = word_segment(value['claim'] + '.')[0]
+            value['claim'] = word_segment(value['claim'])[0]
             value['context'] = word_segment(value['context'])
             if value['evidence']:
-                value['evidence'] = word_segment(value['evidence'] + '.')[0]
+                value['evidence'] = word_segment(value['evidence'])[0]
             data.append(value)
         return data
     
@@ -59,12 +60,15 @@ if __name__=="__main__":
 
     pairs = list()
     for line in data:
+        line["claim"] = re.sub(r"\.", line["claim"])
         claim = " ".join(line["claim"].strip().split())
+        line["evidence"] = re.sub(r"\.", line["evidence"])
         evidence = " ".join(line["evidence"].strip().split())
         context = line["context"]
+        context = [re.sub(r"\.", sent) for sent in context]
         for sentence in context:
-            if sentence != evidence:
-                sentence = " ".join(sentence.strip().split())
+            sentence = " ".join(sentence.strip().split())
+            if sentence != evidence:     
                 pairs.append([claim, evidence, sentence])
      
     train_data, valid_data = train_test_split(pairs, test_size=0.2, shuffle=True)

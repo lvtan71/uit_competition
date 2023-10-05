@@ -75,13 +75,13 @@ class DataLoader(object):
         self.step = 0
 
     def process_sent(self, sentence):
-        sentence = re.sub(" \-LSB\-.*?\-RSB\-", "", sentence)
-        sentence = re.sub("\-LRB\- \-RRB\- ", "", sentence)
-        sentence = re.sub(" -LRB-", " ( ", sentence)
-        sentence = re.sub("-RRB-", " )", sentence)
-        sentence = re.sub("--", "-", sentence)
-        sentence = re.sub("``", '"', sentence)
-        sentence = re.sub("''", '"', sentence)
+        # sentence = re.sub(" \-LSB\-.*?\-RSB\-", "", sentence)
+        # sentence = re.sub("\-LRB\- \-RRB\- ", "", sentence)
+        # sentence = re.sub(" -LRB-", " ( ", sentence)
+        # sentence = re.sub("-RRB-", " )", sentence)
+        # sentence = re.sub("--", "-", sentence)
+        # sentence = re.sub("``", '"', sentence)
+        # sentence = re.sub("''", '"', sentence)
 
         return sentence
 
@@ -174,13 +174,15 @@ class DataLoaderTest(object):
         return sentences
 
     def process_sent(self, sentence):
-        sentence = re.sub(" \-LSB\-.*?\-RSB\-", "", sentence)
-        sentence = re.sub("\-LRB\- \-RRB\- ", "", sentence)
-        sentence = re.sub(" -LRB-", " ( ", sentence)
-        sentence = re.sub("-RRB-", " )", sentence)
-        sentence = re.sub("--", "-", sentence)
-        sentence = re.sub("``", '"', sentence)
-        sentence = re.sub("''", '"', sentence)
+        sentence = re.sub(r"\.", sentence)
+
+        # sentence = re.sub(" \-LSB\-.*?\-RSB\-", "", sentence)
+        # sentence = re.sub("\-LRB\- \-RRB\- ", "", sentence)
+        # sentence = re.sub(" -LRB-", " ( ", sentence)
+        # sentence = re.sub("-RRB-", " )", sentence)
+        # sentence = re.sub("--", "-", sentence)
+        # sentence = re.sub("``", '"', sentence)
+        # sentence = re.sub("''", '"', sentence)
 
         return sentence
 
@@ -198,7 +200,7 @@ class DataLoaderTest(object):
         with open(data_path, 'r', encoding='utf-8') as fin:
             data = json.load(fin)
         for key, value in data.items():
-            claim = self.word_segment(value['claim'] + '.')[0]
+            claim = self.word_segment(value['claim'])[0]
             id = key
             document = value["context"]
             sentences = self.word_segment(document)
