@@ -60,12 +60,12 @@ if __name__=="__main__":
 
     pairs = list()
     for line in data:
-        line["claim"] = re.sub(r"\.", line["claim"])
+        line["claim"] = re.sub(r"\.", "", line["claim"])
         claim = " ".join(line["claim"].strip().split())
-        line["evidence"] = re.sub(r"\.", line["evidence"])
+        line["evidence"] = re.sub(r"\.", "", line["evidence"])
         evidence = " ".join(line["evidence"].strip().split())
         context = line["context"]
-        context = [re.sub(r"\.", sent) for sent in context]
+        context = [re.sub(r"\.", "", sent) for sent in context]
         for sentence in context:
             sentence = " ".join(sentence.strip().split())
             if sentence != evidence:     

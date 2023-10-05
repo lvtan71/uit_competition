@@ -174,7 +174,7 @@ class DataLoaderTest(object):
         return sentences
 
     def process_sent(self, sentence):
-        sentence = re.sub(r"\.", sentence)
+        sentence = re.sub(r"\.", "", sentence)
 
         # sentence = re.sub(" \-LSB\-.*?\-RSB\-", "", sentence)
         # sentence = re.sub("\-LRB\- \-RRB\- ", "", sentence)
