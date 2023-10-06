@@ -11,6 +11,54 @@ def word_segment(document):
     return sentences
 
 
+def split_sentences(text):
+    sentences = []
+    current_sentence = ''
+    in_quotes = False
+
+    # List of common honorifics and abbreviations
+    honorifics_list = ["Mr.", "Ms.", "Mrs.", "Dr.", "Ph.D.", "PhD", "etc."]
+
+    for i in range(len(text)):
+        char = text[i]
+        current_sentence += char
+
+        if char == '"':
+            in_quotes = not in_quotes  # Toggle in-quotes state
+        elif char in ('.', '!', '?') and not in_quotes:
+            # Check if the period might be an abbreviation or honorific
+            cur_word = current_sentence.split()[-1] if len(current_sentence.split()) > 1 else ""
+            next_char = text[i + 1] if i < len(text) - 1 else ""
+
+            if (
+                cur_word in honorifics_list
+                or re.match(r'^[A-Z][a-z]*\.$', cur_word) # check abbreviation (ex: Hubert S. Howe) 
+                or (re.match(r'^[A-Z][a-z]*$', next_char)) # check next char is begin with an upcase
+                #and not re.search(r'(?<=\.)[A-Z]', next_char)) # check there is no upcase behind a dot
+                or next_char.isdigit()
+            ):
+                continue  # Skip sentence split if it meets the conditions
+
+            sentences.append(current_sentence.strip())
+            current_sentence = ''
+
+    if current_sentence:
+        sentences.append(current_sentence.strip())
+
+    return sentences
+
+
+def split_context(context):
+    sentences = []
+    paragraphs = context.split("\n\n")
+    print(paragraphs)
+    for parag in paragraphs:
+        sentences.extend(split_sentences(parag))
+    sentences = [sent for sent in sentences if sent != "."]
+
+    return sentences
+
+
 class GenerateDataPair(object):
     def __init__(self, data_path=None, test_size=None, shuffle=None):
         self.data_path = data_path
@@ -24,7 +72,10 @@ class GenerateDataPair(object):
         for key, value in pure_data.items():
             value['key'] = key
             value['claim'] = word_segment(value['claim'])[0]
-            value['context'] = word_segment(value['context'])
+            context = value['context']
+            splitted_context = split_context(context)
+            segmented_context = [word_segment(sent)[0] for sent in splitted_context]
+            value['context'] = segmented_context
             if value['evidence']:
                 value['evidence'] = word_segment(value['evidence'])[0]
             data.append(value)
@@ -33,7 +84,7 @@ class GenerateDataPair(object):
     def only_have_evidence_data(self, data):
         new_data = []
         for line in data:
-            if line["evidence"]:
+            if line['evidence']:
                 new_data.append(line)
         return new_data
 
@@ -65,7 +116,7 @@ if __name__=="__main__":
         evidence = re.sub(r"[\.]", "", line["evidence"])
         evidence = " ".join(evidence.strip().split())
         context = line["context"]
-        context = [re.sub(r"[\.]", "", sent) for sent in context]
+        context = [re.sub(r"[\.]", "", sent) for sent in context] 
         for sentence in context:
             sentence = " ".join(sentence.strip().split())
             if sentence != evidence:     

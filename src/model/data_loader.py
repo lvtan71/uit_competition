@@ -85,7 +85,6 @@ class DataLoader(object):
         with open(data_path) as fin:
             for step, line in enumerate(fin):
                 sublines = line.strip().split("\t")
-                print(sublines)
                 examples.append([self.process_sent(sublines[0]), self.process_sent(sublines[1]), self.process_sent(sublines[2])])
         return examples
 
