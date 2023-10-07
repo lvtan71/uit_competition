@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def save_to_file(all_predict, outpath):
-    with open(outpath, "w") as out:
+    with open(outpath, "w", encoding="utf-8") as out:
         for key, values in all_predict.items():
             sorted_values = sorted(values, key=lambda x:x[-1], reverse=True)
             data = json.dumps({"id": key, "evidence": sorted_values[:5]})
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_labels", type=int, default=3)
     parser.add_argument("--evi_num", type=int, default=5, help='Evidence num.')
     parser.add_argument("--threshold", type=float, default=0.0, help='Evidence num.')
-    parser.add_argument("--max_len", default=120, type=int,
+    parser.add_argument("--max_len", default=256, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences "
                              "longer than this will be truncated, and sequences shorter than this will be padded.")
     args = parser.parse_args()

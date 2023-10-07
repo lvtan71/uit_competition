@@ -134,7 +134,7 @@ if __name__ == "__main__":
                         default=4,
                         help="Number of updates steps to accumulate before performing a backward/update pass.")
     parser.add_argument("--hidden_dropout_prob", default=0.1, type=float, help="Hidden dropout probability.")
-    parser.add_argument("--pretrained_model_path", type=str, help="Pretrained model path")
+    parser.add_argument("--checkpoint", type=str, help="Pretrained model path")
 
 
     args = parser.parse_args()
@@ -161,8 +161,8 @@ if __name__ == "__main__":
     bert_model = BertForSequenceEncoder(args.bert_pretrain, args.hidden_dropout_prob)
     bert_model = bert_model.cuda()
     model = inference_model(bert_model, args)
-    if args.pretrained_model_path:
-        checkpoint = torch.load(args.pretrained_model_path)
+    if args.checkpoint:
+        checkpoint = torch.load(args.checkpoint)
         model.load_state_dict(checkpoint['model'])
     model = model.cuda()
     train_model(model, args, trainset_reader, validset_reader)
