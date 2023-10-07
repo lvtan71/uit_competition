@@ -103,7 +103,6 @@ if __name__=="__main__":
     parser.add_argument('--outfile_train', type=str, help="Name of output train file")
     #parser.add_argument('--outfile_test', type=str, help="Name of the output test file")
     parser.add_argument('--outfile_valid', type=str, help="Name of the output valid file")
-    parser.add_argument('--vncorenlp_dir', type=str, help="Path to VnCoreNLP")
     args = parser.parse_args()
 
     gen_data = GenerateDataPair()
