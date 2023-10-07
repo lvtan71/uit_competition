@@ -121,7 +121,6 @@ if __name__=="__main__":
             sentence = " ".join(sentence.strip().split())
             if sentence != evidence:
                 set_sent = [claim, evidence, sentence]
-                print(len(set_sent), set_sent)
                 pairs.append(set_sent)
      
     train_data, valid_data = train_test_split(pairs, test_size=0.2, shuffle=True)

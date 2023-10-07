@@ -135,7 +135,6 @@ if __name__ == "__main__":
                         help="Number of updates steps to accumulate before performing a backward/update pass.")
     parser.add_argument("--hidden_dropout_prob", default=0.1, type=float, help="Hidden dropout probability.")
     parser.add_argument("--pretrained_model_path", type=str, help="Pretrained model path")
-    parser.add_argument('--vncorenlp_dir', type=str, help="Path to VnCoreNLP")
 
 
     args = parser.parse_args()

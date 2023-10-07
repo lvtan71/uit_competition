@@ -39,7 +39,7 @@ def eval_model(model, validset_reader):
             if ids[i] not in all_predict:
                 all_predict[ids[i]] = []
             #if probs[i][1] >= probs[i][0]:
-            all_predict[ids[i]].append(sentence_list[i] + [probs[i]])
+            all_predict[ids[i]].append([sentence_list[i]] + [probs[i]])
     return all_predict
 
 
