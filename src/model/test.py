@@ -23,9 +23,8 @@ def save_to_file(all_predict, outpath):
     with open(outpath, "w", encoding="utf-8") as out:
         for key, values in all_predict.items():
             sorted_values = sorted(values, key=lambda x:x[-1], reverse=True)
-            #data = json.dumps({"id": key, "evidence": sorted_values[:5]}) 
-            #out.write(data + "\n")
-            json.dumps({"id": key, "evidence": sorted_values[:5]}, out, ensure_ascii=False, indent=4)
+            data = json.dumps({"id": key, "evidence": sorted_values[:5]}, ensure_ascii=False, indent=4) 
+            out.write(data + "\n")
 
 
 
