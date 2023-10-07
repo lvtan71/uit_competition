@@ -4,11 +4,12 @@ import numpy as np
 import re
 from sklearn.model_selection import train_test_split
 import argparse
-import py_vncorenlp
+import pyvi
+from pyvi import ViTokenizer, ViPosTagger
 
-def word_segment(document):
-    sentences = rdrsegmenter.word_segment(document)
-    return sentences
+def word_segment(sentence):
+    sentence = ViTokenizer.tokenize(sentence)
+    return sentence
 
 
 def split_sentences(text):
@@ -75,13 +76,13 @@ class GenerateDataPair(object):
             pure_data = json.load(f)
         for key, value in pure_data.items():
             value['key'] = key
-            value['claim'] = word_segment(value['claim'])[0]
+            value['claim'] = word_segment(value['claim'])
             context = value['context']
             splitted_context = split_context(context)
-            segmented_context = [word_segment(sent)[0] for sent in splitted_context]
+            segmented_context = [word_segment(sent) for sent in splitted_context]
             value['context'] = segmented_context
             if value['evidence']:
-                value['evidence'] = word_segment(value['evidence'])[0]
+                value['evidence'] = word_segment(value['evidence'])
             data.append(value)
         return data
     
@@ -105,10 +106,6 @@ if __name__=="__main__":
     parser.add_argument('--vncorenlp_dir', type=str, help="Path to VnCoreNLP")
     args = parser.parse_args()
 
-    os.makedirs("./vncorenlp", exist_ok=True)
-    py_vncorenlp.download_model(save_dir='./vncorenlp')
-    rdrsegmenter = py_vncorenlp.VnCoreNLP(annotators=['wseg'], save_dir=args.vncorenlp_dir)
-
     gen_data = GenerateDataPair()
     data = gen_data.read_file(args.infile)
     data = gen_data.only_have_evidence_data(data)
@@ -125,7 +122,7 @@ if __name__=="__main__":
             sentence = " ".join(sentence.strip().split())
             if sentence != evidence:
                 set_sent = [claim, evidence, sentence]
-                print(set_sent)
+                print(len(set_sent), set_sent)
                 pairs.append(set_sent)
      
     train_data, valid_data = train_test_split(pairs, test_size=0.2, shuffle=True)

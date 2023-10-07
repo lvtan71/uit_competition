@@ -4,7 +4,60 @@ import numpy as np
 import json
 import re
 from torch.autograd import Variable
-import py_vncorenlp
+import pyvi
+from pyvi import ViTokenizer, ViPosTagger
+
+def split_sentences(text):
+    sentences = []
+    current_sentence = ''
+    in_quotes = False
+
+    # List of common honorifics and abbreviations
+    honorifics_list = ["Mr.", "Ms.", "Mrs.", "Dr.", "Ph.D.", "PhD", "etc."]
+
+    for i in range(len(text)):
+        char = text[i]
+        current_sentence += char
+
+        if char == '"':
+            in_quotes = not in_quotes  # Toggle in-quotes state
+        elif char in ('.', '!', '?') and not in_quotes:
+            # Check if the period might be an abbreviation or honorific
+            cur_word = current_sentence.split()[-1] if len(current_sentence.split()) > 1 else ""
+            next_char = text[i + 1] if i < len(text) - 1 else ""
+
+            if (
+                cur_word in honorifics_list
+                or re.match(r'^[A-Z][a-z]*\.$', cur_word) # check abbreviation (ex: Hubert S. Howe) 
+                or (re.match(r'^[A-Z][a-z]*$', next_char)) # check next char is begin with an upcase
+                #and not re.search(r'(?<=\.)[A-Z]', next_char)) # check there is no upcase behind a dot
+                or next_char.isdigit()
+            ):
+                continue  # Skip sentence split if it meets the conditions
+
+            sentences.append(current_sentence.strip())
+            current_sentence = ''
+
+    if current_sentence:
+        sentences.append(current_sentence.strip())
+
+    return sentences
+
+def preprocess(doc):
+    doc = re.sub("''", '"', doc)
+    doc = re.sub("“", '"', doc)
+    return doc
+
+def split_context(context):
+    sentences = []
+    context = preprocess(context)
+    paragraphs = context.split("\n\n")
+    for parag in paragraphs:
+        sentences.extend(split_sentences(parag))
+    sentences = [sent for sent in sentences if sent != "."]
+
+    return sentences
+
 
 
 
@@ -75,9 +128,9 @@ class DataLoader(object):
         self.step = 0
 
     def process_sent(self, sentence):  
-        sentence = re.sub(r"['\",\.\?:\-!]", "", sentence)
         sentence = re.sub("''", '"', sentence)
         sentence = re.sub("“", '"', sentence)
+        sentence = re.sub(r"['\",\.\?:\-!]", "", sentence)
 
         return sentence
 
@@ -154,16 +207,14 @@ class DataLoaderTest(object):
         self.total_num = len(inputs)
         self.total_step = np.ceil(self.total_num * 1.0 / batch_size)
         self.step = 0
-        os.makedirs("./vncorenlp", exist_ok=True)
-        py_vncorenlp.download_model(save_dir='./vncorenlp')
-        self.rdrsegmenter = py_vncorenlp.VnCoreNLP(annotators=['wseg'], save_dir=args.vncorenlp_dir)
 
-    def word_segment(self, document):
-        sentences = self.rdrsegmenter.word_segment(document)
-        return sentences
+
+    def word_segment(self, sentence):
+        sentence = ViTokenizer.tokenize(sentence)
+        return sentence
+
 
     def process_sent(self, sentence):
-        sentence = re.sub(r"['\",\.\?:\-!]", "", sentence)
         # sentence = re.sub(" \-LSB\-.*?\-RSB\-", "", sentence)
         # sentence = re.sub("\-LRB\- \-RRB\- ", "", sentence)
         # sentence = re.sub(" -LRB-", " ( ", sentence)
@@ -172,6 +223,7 @@ class DataLoaderTest(object):
         # sentence = re.sub("``", '"', sentence)
         sentence = re.sub("''", '"', sentence)
         sentence = re.sub("“", '"', sentence)
+        sentence = re.sub(r"['\",\.\?:\-!]", "", sentence)
 
         return sentence
     
@@ -182,10 +234,11 @@ class DataLoaderTest(object):
         with open(data_path, 'r', encoding='utf-8') as fin:
             data = json.load(fin)
         for key, value in data.items():
-            claim = self.word_segment(value['claim'])[0]
+            claim = self.word_segment(value['claim'])
             id = key
-            document = value["context"]
-            sentences = self.word_segment(document)
+            context = value['context']
+            sentences = split_context(context)
+            sentences = [self.word_segment(sent) for sent in sentences]
             for sentence in sentences:
                 ids.append(id)
                 inputs.append([self.process_sent(claim), self.process_sent(sentence)])
