@@ -47,11 +47,15 @@ def split_sentences(text):
 
     return sentences
 
+def preprocess(doc):
+    doc = re.sub("''", '"', doc)
+    doc = re.sub("“", '"', doc)
+    return doc
 
 def split_context(context):
     sentences = []
+    context = preprocess(context)
     paragraphs = context.split("\n\n")
-    print(paragraphs)
     for parag in paragraphs:
         sentences.extend(split_sentences(parag))
     sentences = [sent for sent in sentences if sent != "."]
@@ -111,16 +115,18 @@ if __name__=="__main__":
 
     pairs = list()
     for line in data:
-        claim = re.sub(r"[\.]", "", line["claim"])
+        claim = re.sub(r"[\.]", " ", line["claim"])
         claim = " ".join(claim.strip().split())
-        evidence = re.sub(r"[\.]", "", line["evidence"])
+        evidence = re.sub(r"[\.]", " ", line["evidence"])
         evidence = " ".join(evidence.strip().split())
         context = line["context"]
-        context = [re.sub(r"[\.]", "", sent) for sent in context] 
+        context = [re.sub(r"[\.]", " ", sent) for sent in context] 
         for sentence in context:
             sentence = " ".join(sentence.strip().split())
-            if sentence != evidence:     
-                pairs.append([claim, evidence, sentence])
+            if sentence != evidence:
+                set_sent = [claim, evidence, sentence]
+                print(set_sent)
+                pairs.append(set_sent)
      
     train_data, valid_data = train_test_split(pairs, test_size=0.2, shuffle=True)
     #valid_data, testdata = train_test_split(valid_data, test_size=0.5, shuffle=True)

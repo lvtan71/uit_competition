@@ -77,6 +77,7 @@ class DataLoader(object):
     def process_sent(self, sentence):  
         sentence = re.sub(r"['\",\.\?:\-!]", "", sentence)
         sentence = re.sub("''", '"', sentence)
+        sentence = re.sub("“", '"', sentence)
 
         return sentence
 
@@ -170,6 +171,7 @@ class DataLoaderTest(object):
         # sentence = re.sub("--", "-", sentence)
         # sentence = re.sub("``", '"', sentence)
         sentence = re.sub("''", '"', sentence)
+        sentence = re.sub("“", '"', sentence)
 
         return sentence
     
