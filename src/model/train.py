@@ -90,24 +90,27 @@ def train_model(model, args, trainset_reader, validset_reader):
                 optimizer.zero_grad()
                 scheduler.step()
                 logger.info('Epoch: {0}, Step: {1}, Loss: {2}'.format(epoch, global_step, (running_loss / global_step)))
-            if global_step % (args.eval_step * args.gradient_accumulation_steps) == 0:
-                logger.info('Start eval!')
-                eval_acc = eval_model(model, validset_reader)
-                logger.info('Dev acc: {0}'.format(eval_acc))
-                if eval_acc >= best_acc:
-                    best_acc = eval_acc
-                    torch.save({'epoch': epoch,
-                                'model': model.state_dict()}, save_path + ".best.pt")
-                    logger.info("Saved best epoch {0}, best acc {1}".format(epoch, best_acc))
-    # Eval after training
-    logger.info('Start last eval!')
-    eval_acc = eval_model(model, validset_reader)
-    logger.info('Dev acc: {0}'.format(eval_acc))
-    if eval_acc >= best_acc:
-        best_acc = eval_acc
-        torch.save({'epoch': epoch,
-                    'model': model.state_dict()}, save_path + ".best.pt")
-        logger.info("Saved best epoch {0}, best acc {1}".format(epoch, best_acc))
+            # if global_step % (args.eval_step * args.gradient_accumulation_steps) == 0:
+            #     logger.info('Start eval!')
+            #     eval_acc = eval_model(model, validset_reader)
+            #     logger.info('Dev acc: {0}'.format(eval_acc))
+            #     if eval_acc >= best_acc:
+            #         best_acc = eval_acc
+            #         torch.save({'epoch': epoch,
+            #                     'model': model.state_dict()}, save_path + ".best.pt")
+            #         logger.info("Saved best epoch {0}, best acc {1}".format(epoch, best_acc))
+
+        # Eval after training
+        logger.info('Start epoch {} eval!'.format(epoch))
+        print('Start epoch {} eval!'.format(epoch))
+        eval_acc = eval_model(model, validset_reader)
+        logger.info('Dev acc: {0}'.format(eval_acc))
+        print('Dev acc: {0}'.format(eval_acc))
+        if eval_acc >= best_acc:
+            best_acc = eval_acc
+            torch.save({'epoch': epoch,
+                        'model': model.state_dict()}, save_path + ".best.pt")
+            logger.info("Saved best epoch {0}, best acc {1}".format(epoch, best_acc))
 
 
 
