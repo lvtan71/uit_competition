@@ -1,4 +1,5 @@
 import random, os
+from tqdm import tqdm
 import argparse
 import numpy as np
 import torch
@@ -70,7 +71,7 @@ def train_model(model, args, trainset_reader, validset_reader):
     
     global_step = 0
     crit = nn.MarginRankingLoss(margin=1)
-    for epoch in range(int(args.num_train_epochs)):
+    for epoch in tqdm(range(int(args.num_train_epochs))):
         optimizer.zero_grad()
         for inp_tensor_pos, msk_tensor_pos, inp_tensor_neg, msk_tensor_neg in trainset_reader:
             model.train()

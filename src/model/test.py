@@ -14,18 +14,24 @@ from bert_model import BertForSequenceEncoder
 from torch.nn import NLLLoss
 import logging
 import json
+import re
 
 logger = logging.getLogger(__name__)
 
+
+def pos_process(sentence):
+    sentence = re.sub(r"[\_]", " ", sentence)
+    return sentence
 
 
 def save_to_file(all_predict, outpath):
     with open(outpath, "w", encoding="utf-8") as out:
         for key, values in all_predict.items():
+            evidence = {}
             sorted_values = sorted(values, key=lambda x:x[-1], reverse=True)
-            data = json.dumps({"id": key, "evidence": sorted_values[:5]}, ensure_ascii=False, indent=4) 
-            out.write(data + "\n")
-
+            evidence["evidence"] = sorted_values[0][0]
+            all_predict[key] = evidence
+        json.dump(all_predict, out, ensure_ascii=False, indent=4)
 
 
 def eval_model(model, validset_reader):
