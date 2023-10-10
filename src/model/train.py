@@ -71,9 +71,10 @@ def train_model(model, args, trainset_reader, validset_reader):
     
     global_step = 0
     crit = nn.MarginRankingLoss(margin=1)
-    for epoch in tqdm(range(int(args.num_train_epochs))):
+    for epoch in range(int(args.num_train_epochs)):
+        print("----------EPOCH {}----------".format(epoch))
         optimizer.zero_grad()
-        for inp_tensor_pos, msk_tensor_pos, inp_tensor_neg, msk_tensor_neg in trainset_reader:
+        for inp_tensor_pos, msk_tensor_pos, inp_tensor_neg, msk_tensor_neg in tqdm(trainset_reader):
             model.train()
             score_pos = model(inp_tensor_pos, msk_tensor_pos)
             score_neg = model(inp_tensor_neg, msk_tensor_neg)
