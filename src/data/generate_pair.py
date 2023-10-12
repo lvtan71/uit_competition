@@ -18,7 +18,10 @@ def split_sentences(text):
     in_quotes = False
 
     # List of common honorifics and abbreviations
-    honorifics_list = ["Mr.", "Ms.", "Mrs.", "Dr.", "Ph.D.", "PhD", "etc."]
+    honorifics_list = ["Mr.", "Ms.", "Mrs.", "Dr.", "Ph.D.", "PhD", "etc.",
+                       "TS.", "PSG.", "Th.S.", "ThS.", "GS.", "BS.", "KS.",
+                       "approx.", "appt.", "apt.", "dept.", "est.", "min.",
+                       "TP.", "Tp.", "Ô.B."]
 
     for i in range(len(text)):
         char = text[i]
@@ -28,14 +31,16 @@ def split_sentences(text):
             in_quotes = not in_quotes  # Toggle in-quotes state
         elif char in ('.', '!', '?') and not in_quotes:
             # Check if the period might be an abbreviation or honorific
-            cur_word = current_sentence.split()[-1] if len(current_sentence.split()) > 1 else ""
+            cur_word = current_sentence.split()[-1] if len(current_sentence.split()) >= 1 else ""
             next_char = text[i + 1] if i < len(text) - 1 else ""
 
+            #print(cur_word, "-", next_char)
             if (
-                cur_word in honorifics_list
-                or re.match(r'^[A-Z][a-z]*\.$', cur_word) # check abbreviation (ex: Hubert S. Howe) 
-                or (re.match(r'^[A-Z][a-z]*$', next_char)) # check next char is begin with an upcase
+                len([word for word in honorifics_list if word in cur_word])
+                or re.match(r'^[A-Z]\.$', cur_word) # check abbreviation (ex: Hubert S. Howe)
+                or (re.match(r'^[A-Za-z]*$', next_char)) # check next char is begin with an upcase
                 #and not re.search(r'(?<=\.)[A-Z]', next_char)) # check there is no upcase behind a dot
+                or next_char == "."
                 or next_char.isdigit()
             ):
                 continue  # Skip sentence split if it meets the conditions

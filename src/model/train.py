@@ -60,6 +60,12 @@ def train_model(model, args, trainset_reader, validset_reader):
 
     param_optimizer = list(model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+
+    """no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']: no_decay là một danh sách chứa các tên tham số mà bạn không muốn áp dụng
+    trọng lượng giảm (weight decay) lên chúng. Trong một tối ưu hóa thông thường, trọng lượng giảm được áp dụng để ngăn chặn overfitting 
+    bằng cách thêm một phạt lên giá trị của tham số. Tuy nhiên, có những loại tham số, chẳng hạn như bias và các tham số của các lớp 
+    LayerNorm, mà bạn không muốn áp dụng trọng lượng giảm."""
+
     optimizer_grouped_parameters = [
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
@@ -117,7 +123,7 @@ def train_model(model, args, trainset_reader, validset_reader):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dropout', type=float, default=0.6, help='Dropout.')
+    parser.add_argument('--dropout', type=float, default=0.1, help='Dropout.')
     parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training.')
     parser.add_argument('--train_path', help='train path')
     parser.add_argument('--valid_path', help='valid path')
@@ -130,7 +136,7 @@ if __name__ == "__main__":
     parser.add_argument("--layer", type=int, default=1, help='Graph Layer.')
     parser.add_argument("--num_labels", type=int, default=3)
     parser.add_argument("--evi_num", type=int, default=5, help='Evidence num.')
-    parser.add_argument("--threshold", type=float, default=0.0, help='Evidence num.')
+    parser.add_argument("--threshold", type=float, default=0.0, help='Threshold.')
     parser.add_argument("--max_len", default=256, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences "
                              "longer than this will be truncated, and sequences shorter than this will be padded.")

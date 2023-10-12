@@ -29,7 +29,7 @@ def save_to_file(all_predict, outpath):
         for key, values in all_predict.items():
             evidence = {}
             sorted_values = sorted(values, key=lambda x:x[-1], reverse=True)
-            evidence["evidence"] = sorted_values[0][0]
+            evidence["evidence"] = pos_process(sorted_values[0][0])
             all_predict[key] = evidence
         json.dump(all_predict, out, ensure_ascii=False, indent=4)
 
@@ -37,7 +37,7 @@ def save_to_file(all_predict, outpath):
 def eval_model(model, validset_reader):
     model.eval()
     all_predict = dict()
-    for inp_tensor, msk_tensor, ids, sentence_list in validset_reader:
+    for inp_tensor, msk_tensor, ids, sentence_list, claim_list in tqdm(validset_reader):
         probs = model(inp_tensor, msk_tensor)
         probs = probs.tolist()
         assert len(probs) == len(sentence_list)
@@ -45,7 +45,8 @@ def eval_model(model, validset_reader):
             if ids[i] not in all_predict:
                 all_predict[ids[i]] = []
             #if probs[i][1] >= probs[i][0]:
-            all_predict[ids[i]].append([sentence_list[i]] + [probs[i]])
+            if len(pos_process(sentence_list[i]).split()) >= np.ceil(len(pos_process(claim_list[i]).split)*0.5):
+                all_predict[ids[i]].append([sentence_list[i]] + [probs[i]])
     return all_predict
 
 

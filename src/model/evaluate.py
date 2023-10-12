@@ -3,6 +3,7 @@ import argparse
 import re
 import json
 import numpy as np
+from tqdm import tqdm
 
 def preprocess_text(text: str) -> str:    
     text = re.sub(r"['\",\.\?:\-!]", "", text)
@@ -35,11 +36,12 @@ def evaluate(groundtruth_file, predict_file):
 
     ids = list(gt_data.keys())
     accs_1 = []
-    for id in ids:
+    for id in tqdm(ids):
         gt = gt_data[id]
         pred = pred_data[id]
-        score = accuracy(gt, pred)
-        accs_1.append(score)
+        if gt["evidence"]:
+            score = accuracy(gt, pred)
+            accs_1.append(score)
 
     score = np.array(accs_1).mean()
 

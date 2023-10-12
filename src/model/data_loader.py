@@ -231,6 +231,7 @@ class DataLoaderTest(object):
         inputs = list()
         ids = list()
         sentence_list = list()
+        claim_list = list()
         with open(data_path, 'r', encoding='utf-8') as fin:
             data = json.load(fin)
         for key, value in data.items():
@@ -243,7 +244,8 @@ class DataLoaderTest(object):
                 ids.append(id)
                 inputs.append([self.process_sent(claim), self.process_sent(sentence)])
                 sentence_list.append(sentence)
-        return inputs, ids, sentence_list
+                claim_list.append(claim)
+        return inputs, ids, sentence_list, claim_list
 
     def __iter__(self):
         return self
