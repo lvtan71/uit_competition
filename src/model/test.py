@@ -45,7 +45,7 @@ def eval_model(model, validset_reader):
             if ids[i] not in all_predict:
                 all_predict[ids[i]] = []
             #if probs[i][1] >= probs[i][0]:
-            if len(pos_process(sentence_list[i]).split()) >= np.ceil(len(pos_process(claim_list[i]).split)*0.5):
+            if len(pos_process(sentence_list[i]).split()) >= np.ceil(len(pos_process(claim_list[i]).split())*0.5):
                 all_predict[ids[i]].append([sentence_list[i]] + [probs[i]])
     return all_predict
 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument('--outdir', required=True, help='path to output directory')
     parser.add_argument('--bert_pretrain', default="bert-base", type=str, required=True)
     parser.add_argument('--checkpoint', required=True)
-    parser.add_argument('--dropout', type=float, default=0.6, help='Dropout.')
+    parser.add_argument('--dropout', type=float, default=0.1, help='Dropout.')
     parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training.')
     parser.add_argument("--bert_hidden_dim", default=768, type=int, help="Total batch size for training.")
     parser.add_argument("--layer", type=int, default=1, help='Graph Layer.')
