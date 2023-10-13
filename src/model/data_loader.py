@@ -199,10 +199,11 @@ class DataLoaderTest(object):
         self.evi_num = args.evi_num
         self.threshold = args.threshold
         self.data_path = data_path
-        inputs, ids, sentence_list = self.read_file(data_path)
+        inputs, ids, sentence_list, claim_list = self.read_file(data_path)
         self.inputs = inputs
         self.ids = ids
         self.sentence_list = sentence_list
+        self.claim_list = claim_list
 
         self.total_num = len(inputs)
         self.total_step = np.ceil(self.total_num * 1.0 / batch_size)
@@ -262,6 +263,7 @@ class DataLoaderTest(object):
             inputs = self.inputs[self.step * self.batch_size : (self.step+1) * self.batch_size]
             ids = self.ids[self.step * self.batch_size : (self.step+1) * self.batch_size]
             sentence_list = self.sentence_list[self.step * self.batch_size : (self.step+1) * self.batch_size]
+            claim_list = self.claim_list[self.step * self.batch_size : (self.step+1) * self.batch_size]
             inp, msk = tok2int_list(inputs, self.tokenizer, self.max_len)
             inp_tensor_input = Variable(
                 torch.LongTensor(inp)
@@ -274,7 +276,7 @@ class DataLoaderTest(object):
                 inp_tensor_input = inp_tensor_input.cuda()
                 msk_tensor_input = msk_tensor_input.cuda()
             self.step += 1
-            return inp_tensor_input, msk_tensor_input, ids, sentence_list
+            return inp_tensor_input, msk_tensor_input, ids, sentence_list, claim_list
         else:
             self.step = 0
             raise StopIteration()

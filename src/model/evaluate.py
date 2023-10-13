@@ -47,7 +47,7 @@ def evaluate(groundtruth_file, predict_file):
 
     return score
 
-if __name__=="__name__":
+if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--predict_file", type=str, help="Name of output prediction file")
     parser.add_argument("--groundtruth_file", type=str, help="Name of groundtruth file")
