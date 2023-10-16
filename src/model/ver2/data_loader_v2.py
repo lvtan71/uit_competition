@@ -156,12 +156,12 @@ class DataLoader(object):
             inp_pos, msk_pos = tok2int_list(pos_inputs, self.tokenizer, self.max_len)
             inp_neg, msk_neg = tok2int_list(neg_inputs, self.tokenizer, self.max_len)
 
-            inp_tensor_anchor = Variable(torch.LongTensor(inp_anchor), requires_grad=True)
-            msk_tensor_anchor = Variable(torch.LongTensor(msk_anchor), requires_grad=True)
-            inp_tensor_pos = Variable(torch.LongTensor(inp_pos), requires_grad=True)
-            msk_tensor_pos = Variable(torch.LongTensor(msk_pos), requires_grad=True)
-            inp_tensor_neg = Variable(torch.LongTensor(inp_neg), requires_grad=True)
-            msk_tensor_neg = Variable(torch.LongTensor(msk_neg), requires_grad=True)
+            inp_tensor_anchor = Variable(torch.FloatTensor(inp_anchor), requires_grad=True)
+            msk_tensor_anchor = Variable(torch.FloatTensor(msk_anchor), requires_grad=True)
+            inp_tensor_pos = Variable(torch.FloatTensor(inp_pos), requires_grad=True)
+            msk_tensor_pos = Variable(torch.FloatTensor(msk_pos), requires_grad=True)
+            inp_tensor_neg = Variable(torch.FloatTensor(inp_neg), requires_grad=True)
+            msk_tensor_neg = Variable(torch.FloatTensor(msk_neg), requires_grad=True)
 
                         
             if self.cuda:
