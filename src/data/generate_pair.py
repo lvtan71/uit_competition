@@ -116,7 +116,7 @@ class GenerateDataPair(object):
     def only_have_evidence_data(self, data):
         new_data = []
         for line in data:
-            if line['evidence']:
+            if line['evidence'] and len(re.split("[ _]", line['evidence'])) >= 5:
                 new_data.append(line)
         return new_data
 
