@@ -155,7 +155,7 @@ if __name__ == "__main__":
     # Use this line to set total number samples as total_num_valid
     #validset_reader = DataLoader(args.valid_path, tokenizer, args, batch_size=args.valid_batch_size, test=True)
     # Use this line to set total number samples as number of lines read in file
-    validset_reader = DataLoader(args.valid_path, tokenizer, args, batch_size=args.valid_batch_size, test=False)
+    validset_reader = DataLoader(args.valid_path, tokenizer, args, batch_size=args.valid_batch_size)
 
     logger.info('initializing estimator model')
     bert_model = BertForSequenceEncoder(args.bert_pretrain, args)
