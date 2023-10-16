@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import BatchNorm1d, Linear, ReLU
-from bert_model import BertForSequenceEncoder
 
 from torch.nn import BatchNorm1d, Linear, ReLU
 from torch.autograd import Variable
