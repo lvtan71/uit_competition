@@ -11,7 +11,7 @@ from torch.optim import Adam
 from torch.optim.lr_scheduler import LambdaLR
 from transformers import AutoTokenizer, AutoModel
 
-from models import inference_model
+from models_v2 import inference_model
 from data_loader_v2 import DataLoader, DataLoaderTest
 from models_v2 import BertForSequenceEncoder, TripletLoss
 from torch.nn import NLLLoss
