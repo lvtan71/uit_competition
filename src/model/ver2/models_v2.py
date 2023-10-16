@@ -5,7 +5,6 @@ from torch.nn import BatchNorm1d, Linear, ReLU
 from bert_model import BertForSequenceEncoder
 
 from torch.nn import BatchNorm1d, Linear, ReLU
-from bert_model import BertForSequenceEncoder
 from torch.autograd import Variable
 import numpy as np
 from transformers import AutoModel
