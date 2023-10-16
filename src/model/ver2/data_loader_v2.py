@@ -106,14 +106,9 @@ class DataLoader(object):
         self.data_path = data_path
         examples = self.read_file(data_path)
         self.examples = examples
-        self.total_num = len(examples)
-        if self.test:
-            self.total_num = args.total_num_valid
-            self.total_step = np.ceil(self.total_num * 1.0 / batch_size)
-            self.shuffle()
-        else:
-            self.total_step = self.total_num / batch_size
-            self.shuffle()
+        self.total_num = len(examples)  
+        self.total_step = self.total_num / batch_size
+        self.shuffle()
         self.step = 0
 
 
